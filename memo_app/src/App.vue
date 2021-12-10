@@ -1,20 +1,21 @@
 <template>
   <div id="app">
     <h1>メモアプリ</h1>
-      <form @submit.prevent>
-        <textarea v-model="newMemo" v-show="newForm" cols="40" rows="20"></textarea>
-        <button  @click="add_Memo()" v-show="newForm" >作成</button>
-        <button @click="createNewMemo" v-show="createButton">新規</button>
+      <form @submit.prevent class="newForm">
+        <textarea v-model="newMemo" v-show="newForm" cols="40" rows="35"></textarea> <br>
+        <button  @click="add_Memo()" v-show="newForm" class="createButton">作成</button>
       </form>
     <ul>
       <li v-for="(memo, index) in memos" :key='index'>
-        <a href='#' @click="showDetails(memo)">{{ memo.title }}</a>
+        <a href='#' @click="showDetails(memo)" class="memo">{{ memo.title }}</a>
       </li>
     </ul>
-    <textarea v-model="editMemo" v-show="editForm" cols="40" rows="20"></textarea>
-    <button @click="edit_Memo(memo)" v-show="editForm">変更</button>
-    <button @click="delete_Memo(index)" v-show="editForm" >削除</button>
-        {{ $data }}
+    <a href="#" @click="createNewMemo" v-show="createButton" class="addButton">＋</a>
+    <form @submit.prevent class="editForm">
+      <textarea v-model="editMemo" v-show="editForm" cols="40" rows="35"></textarea>
+      <button @click="edit_Memo(memo)" v-show="editForm" class="editButton">変更</button>
+      <button @click="delete_Memo(memo)" v-show="editForm" class="deleteButton" >削除</button>
+    </form>
   </div>
 </template>
 
@@ -44,11 +45,11 @@ export default {
       this.createButton = false;
     },
     add_Memo: function(){
-      var str1 = this.newMemo
-      var str2 = this.newMemo.split("\n");
+      var newMemo = this.newMemo
+      var title = this.newMemo.split("\n");
       this.memos.push({
-        memo: str1,
-        title: str2[0],
+        memo: newMemo,
+        title: title[0],
       });
       this.newMemo = '';
       this.newForm = false;
@@ -56,23 +57,28 @@ export default {
       this.saveMemo();
     },
     showDetails: function(memo){
+      if(this.newForm == true){
+        this.editForm = false;
+      }else{
       this.editForm = true;
+      }
       this.editMemo = memo.memo
     },
     edit_Memo: function(memo){
         const targetIndex = this.memos.indexOf(memo);
-        var str1 = this.editMemo;
-        var str2 = this.editMemo.split("\n");
+        var editMemo = this.editMemo;
+        var title = this.editMemo.split("\n");
         this.memos.splice(targetIndex, 1, {
-          memo: str1,
-          title: str2[0],
+          memo: editMemo,
+          title: title[0],
         }) 
         this.editMemo = '';
         this.editForm = false;
         this.saveMemo();
     },
-    delete_Memo: function(index){
-        this.memos.splice(index, 1);
+    delete_Memo: function(memo){
+      const targetIndex = this.memos.indexOf(memo)
+        this.memos.splice(targetIndex, 1);
         this.editForm = false;
         this.saveMemo();
       }
@@ -81,5 +87,47 @@ export default {
 </script>
 
 <style>
-
+#app {
+  width: 600px;
+  height: 600px;
+  margin: auto;
+  border: 2px solid brown; 
+  position: relative;
+}
+#app h1{
+  background-color: brown;
+  color: white;
+  text-align: center;
+  margin-top: 0;
+}
+#app .addButton{
+  font-size: 25px;
+  padding: 5px 5px 5px 15px;
+}
+#app .createButton{
+  width: 300px;
+  height: 30px;
+}
+#app .newForm{
+  position: absolute;
+  top: 70px;
+  left: 280px;
+}
+#app .memo{
+  font-size: 20px;
+}
+#app .editForm{
+  position: absolute;
+  top: 70px;
+  left: 280px;
+}
+#app .editButton{
+  width: 200px;
+  margin-right: 5px;
+  height: 30px;
+}
+#app .deleteButton{
+  width: 100px;
+  height: 30px;
+}
 </style>
